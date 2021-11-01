@@ -27,6 +27,7 @@ async function run() {
         // console.log('connected to mongodb');
         const database = client.db("ruksatVacationPlanner");
         const serviceCollection = database.collection('serviceInfo');
+        const bookingCollection = database.collection('serviceBooking');
 
 // GET Services API
 app.get('/services' , async(req, res) =>{
@@ -51,7 +52,31 @@ app.post('/services' , async( req, res) =>{
     const result = await serviceCollection.insertOne(service);
     res.json(result);
 })
+ 
+//    GET API for Booking
+app.get('/booking' , async(req, res) =>{
+    const cursor = bookingCollection.find({});
+    const bookingResult = await cursor.toArray();
+    res.json(bookingResult);
 
+})
+
+
+// POST API FOR BOOKINGS
+app.post('/booking', async(req, res) =>{
+     const booking = req.body;
+    // console.log('hit the post api for booking', booking);
+   const result = await bookingCollection.insertOne(booking);
+   res.json(result);
+
+})
+// DELETE API
+ app.delete('/booking/:id', async(req, res) =>{
+     const id = req.params.id;
+     const query = {_id : ObjectId(id)};
+     const result = await bookingCollection.deleteOne(query);
+     res.json(result);
+ })
 
     }
     finally{
